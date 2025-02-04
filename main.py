@@ -1,3 +1,5 @@
+from fastapi import FastAPI
+from pydantic import BaseModel
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split, GridSearchCV
@@ -5,6 +7,15 @@ from sklearn.metrics import mean_absolute_error
 import xgboost as xgb
 import json
 import os
+
+# Define la estructura del modelo de entrada para FastAPI
+class PredictionInput(BaseModel):
+    input_values: list
+    input_columns: list
+    target_column: str
+    csv_path: str
+
+app = FastAPI()
 
 def load_best_params(json_path, input_columns, target_column):
     if os.path.exists(json_path):
@@ -79,3 +90,13 @@ def train_and_predict(csv_path, input_columns, target_column, input_values, poly
         mae = mean_absolute_error(y, best_model.predict(X))
     
     return pred, mae
+
+@app.post("/predict/")
+async def predict(input_data: PredictionInput):
+    prediction, mae = train_and_predict(
+        input_data.csv_path,
+        input_data.input_columns,
+        input_data.target_column,
+        input_data.input_values
+    )
+    return {"prediction": float(prediction), "mean_absolute_error": float(mae)}
