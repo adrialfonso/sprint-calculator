@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sprint Calculator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Sprint Calculator</h1>
+
+    <form id="predictionForm">
+      <label for="inputValues">Valores de entrada (separados por coma):</label>
+      <input type="text" id="inputValues" placeholder="4.02, 6.9" required>
+
+      <label for="inputColumns">Columnas de entrada (separadas por coma):</label>
+      <input type="text" id="inputColumns" placeholder="30m, 60m" required>
+
+      <label for="targetColumn">Distancia objetivo:</label>
+      <input type="text" id="targetColumn" placeholder="100m" required>
+
+      <label for="csvPath">Ruta al archivo CSV:</label>
+      <input type="text" id="csvPath" placeholder="100m_splits_data.csv" required>
+
+      <button type="submit">Predecir</button>
+    </form>
+
+    <div id="result" class="result">
+      <h3>Predicción: <span id="prediction"></span> segundos</h3>
+      <p>Error absoluto medio: <span id="mae"></span></p>
+    </div>
+
+    <div id="error" class="error" style="display: none;">
+      <h3>Error: <span id="errorMessage"></span></h3>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('predictionForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      const inputValues = document.getElementById('inputValues').value.split(',').map(val => parseFloat(val.trim()));
+      const inputColumns = document.getElementById('inputColumns').value.split(',').map(val => val.trim());
+      const targetColumn = document.getElementById('targetColumn').value.trim();
+      const csvPath = document.getElementById('csvPath').value.trim();
+
+      document.getElementById('result').style.display = 'none';
+      document.getElementById('error').style.display = 'none';
+
+      try {
+        const response = await fetch('http://localhost:8000/predict/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            input_values: inputValues,
+            input_columns: inputColumns,
+            target_column: targetColumn,
+            csv_path: csvPath
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          document.getElementById('prediction').textContent = data.prediction.toFixed(2);
+          document.getElementById('mae').textContent = data.mean_absolute_error.toFixed(2);
+          document.getElementById('result').style.display = 'block';
+        } else {
+          document.getElementById('errorMessage').textContent = data.detail || 'Error desconocido.';
+          document.getElementById('error').style.display = 'block';
+        }
+      } catch (error) {
+        document.getElementById('errorMessage').textContent = 'Hubo un problema con la conexión al servidor.';
+        document.getElementById('error').style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>
