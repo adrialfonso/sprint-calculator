@@ -7,6 +7,7 @@ from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import mean_absolute_error
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import euclidean_distances
 import xgboost as xgb
 import json
 import os
@@ -77,7 +78,15 @@ def find_best_params(csv_path, input_columns, target_column, json_path):
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error al procesar el archivo CSV o al entrenar el modelo.")
 
-def train_and_predict(csv_path, input_columns, target_column, input_values, poly_degree=2):
+def is_input_similar(X_train, input_values, threshold=0.5):
+    distances = euclidean_distances(X_train, [input_values])
+    min_distance = distances.min()
+    print(min_distance)  
+    if min_distance > threshold:
+        raise HTTPException(status_code=400, detail="El input no es similar a los datos disponibles.")
+    return True
+
+def train_and_predict(csv_path, input_columns, target_column, input_values, poly_degree=2, threshold=0.07):
     try:
         df = pd.read_csv(csv_path).dropna(subset=input_columns + [target_column])
 
@@ -85,6 +94,9 @@ def train_and_predict(csv_path, input_columns, target_column, input_values, poly
             df[col] = pd.to_numeric(df[col], errors='coerce')
 
         X, y = df[input_columns], df[target_column]
+
+        if not is_input_similar(X, input_values, threshold):
+            raise HTTPException(status_code=400, detail="El input no es similar a los datos disponibles.")
 
         if len(input_columns) == 1:
             poly = PolynomialFeatures(degree=poly_degree)

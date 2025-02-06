@@ -1,80 +1,105 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f7f6;
-    margin: 0;
-    padding: 0;
-  }
-  
-  h1 {
-    color: #007bff;
-    text-align: center;
-    margin-top: 20px;
-  }
-  
+  font-family: Arial, sans-serif;
+  background-color: #f4f7f6;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  color: #007bff;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+input, select {
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  width: 100%;
+}
+
+button {
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.result {
+  display: none;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.result h3 {
+  color: #28a745;
+  font-size: 24px;
+}
+
+.result p {
+  font-size: 18px;
+}
+
+.column-input {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+  gap: 10px;
+}
+
+.column-input select, .column-input input {
+  width: 48%;
+}
+
+.column-input button {
+  background-color: #dc3545;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 5px;
+  height: 38px;
+  align-self: center;
+}
+
+.column-input button:hover {
+  background-color: #c82333;
+}
+
+@media (max-width: 600px) {
   .container {
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-  }
-  
-  form {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  label {
-    font-size: 16px;
-    margin-bottom: 8px;
-  }
-  
-  input {
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-  }
-  
-  button {
-    padding: 12px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #0056b3;
-  }
-  
-  .result {
-    display: none;
-    margin-top: 20px;
-    text-align: center;
-  }
-  
-  .result h3 {
-    color: #28a745;
-    font-size: 24px;
-  }
-  
-  .result p {
-    font-size: 18px;
-  }
-  
-  @media (max-width: 600px) {
-    .container {
       padding: 15px;
-    }
-  
-    input, button {
-      font-size: 14px;
-    }
   }
-  
+
+  input, button {
+      font-size: 14px;
+  }
+}
