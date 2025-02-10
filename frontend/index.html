@@ -53,10 +53,47 @@
 
       const input = document.createElement('input');
       input.setAttribute('type', 'number');
-      input.setAttribute('placeholder', 'Valor');
-      input.setAttribute('step', 'any'); 
+      input.setAttribute('placeholder', 'Split time');
+      input.setAttribute('step', 'any');
       input.required = true;
       div.appendChild(input);
+
+      const checkboxDiv = document.createElement('div');
+      checkboxDiv.classList.add('checkbox-container');
+      
+      const manualTimeCheckbox = document.createElement('input');
+      manualTimeCheckbox.setAttribute('type', 'checkbox');
+      manualTimeCheckbox.setAttribute('id', `manualTime${columnCount}`);
+      const manualTimeLabel = document.createElement('label');
+      manualTimeLabel.setAttribute('for', `manualTime${columnCount}`);
+      manualTimeLabel.textContent = 'Hand timing';
+      manualTimeLabel.classList.add('checkbox-label');
+      checkboxDiv.appendChild(manualTimeCheckbox);
+      checkboxDiv.appendChild(manualTimeLabel);
+
+      const electronicTimeCheckbox = document.createElement('input');
+      electronicTimeCheckbox.setAttribute('type', 'checkbox');
+      electronicTimeCheckbox.setAttribute('id', `electronicTime${columnCount}`);
+      const electronicTimeLabel = document.createElement('label');
+      electronicTimeLabel.setAttribute('for', `electronicTime${columnCount}`);
+      electronicTimeLabel.textContent = 'Electronic timing';
+      electronicTimeLabel.classList.add('checkbox-label');
+      checkboxDiv.appendChild(electronicTimeCheckbox);
+      checkboxDiv.appendChild(electronicTimeLabel);
+
+      manualTimeCheckbox.addEventListener('change', () => {
+        if (manualTimeCheckbox.checked) {
+          electronicTimeCheckbox.checked = false;
+        }
+      });
+
+      electronicTimeCheckbox.addEventListener('change', () => {
+        if (electronicTimeCheckbox.checked) {
+          manualTimeCheckbox.checked = false;
+        }
+      });
+
+      div.appendChild(checkboxDiv);
 
       const deleteButton = document.createElement('button');
       deleteButton.textContent = 'Clean';
@@ -78,7 +115,13 @@
       columnInputs.forEach(input => {
         const column = input.querySelector('select').value;
         const value = parseFloat(input.querySelector('input').value);
-        inputValues[column] = value;
+        const manualTimeCheckbox = input.querySelector('input[type="checkbox"]:nth-child(1)');
+        
+        if (manualTimeCheckbox.checked) {
+          inputValues[column] = value + 0.45;
+        } else {
+          inputValues[column] = value;
+        }
       });
 
       const targetColumn = document.getElementById('targetColumn').value.trim();

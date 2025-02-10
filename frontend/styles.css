@@ -28,7 +28,8 @@ form {
 
 label {
   font-size: 16px;
-  margin-bottom: 8px;
+  margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 
 input, select {
@@ -48,6 +49,8 @@ button {
   border-radius: 5px;
   font-size: 16px;
   cursor: pointer;
+  margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 
 button:hover {
@@ -102,4 +105,19 @@ button:hover {
   input, button {
       font-size: 14px;
   }
+}
+
+.checkbox-label {
+  font-size: 0.9rem; 
+  margin-left: 5px;
+}
+
+.checkbox-container {
+  display: flex;
+  gap: 10px; 
+  align-items: center;
+}
+
+.column-input {
+  margin-bottom: 10px;
 }
