@@ -11,23 +11,19 @@
     <h1>Sprint Calculator</h1>
 
     <form id="predictionForm">
-      <label for="inputColumns">Columnas de entrada:</label>
-      <div id="columnInputs">
-      </div>
-      <button type="button" onclick="addColumnInput()">Añadir columna</button>
-      
-      <label for="targetColumn">Distancia objetivo:</label>
+      <label for="inputColumns">Input splits:</label>
+      <div id="columnInputs"></div>
+      <button type="button" onclick="addColumnInput()">Add split</button>
+
+      <label for="targetColumn">Target Distance:</label>
       <input type="text" id="targetColumn" placeholder="100m" required>
 
-      <label for="csvPath">Ruta al archivo CSV:</label>
-      <input type="text" id="csvPath" placeholder="100m_splits_data.csv" required>
-
-      <button type="submit">Predecir</button>
+      <button type="submit">Predict</button>
     </form>
 
-    <div id="result" class="result">
-      <h3>Predicción: <span id="prediction"></span> segundos</h3>
-      <p>Error absoluto medio: <span id="mae"></span></p>
+    <div id="result" class="result" style="display: none;">
+      <h3>Result: <span id="prediction"></span> seconds</h3>
+      <p>Mean Absolute Error: <span id="mae"></span></p>
     </div>
 
     <div id="error" class="error" style="display: none;">
@@ -36,7 +32,13 @@
   </div>
 
   <script>
-    const columnOptions = ['10m', '20m', '30m', '40m', '50m', '60m', '70m', '80m', '90m', '100m'];
+    const columnOptions = [
+      '10m', '20m', '30m', '40m', '50m', '60m', '70m', '80m', '90m', '100m', '120m', '150m', '180m', '200m', 
+      '10-20m', '20-30m', '30-40m', '40-50m', '50-60m', '60-70m', '70-80m', '80-90m', '90-100m',
+      '10-30m', '20-40m', '30-50m', '40-60m', '50-70m', '60-80m', '70-90m', '80-100m', '100-120m',
+      '10-40m', '20-50m', '30-60m', '40-70m', '50-80m', '60-90m', '70-100m', 
+      '50-100m', '100-150m', '150-200m', '180-200m', 
+      '50-150m', '100-200m'];
     let columnCount = 0;
 
     function addColumnInput() {
@@ -57,7 +59,7 @@
       div.appendChild(input);
 
       const deleteButton = document.createElement('button');
-      deleteButton.textContent = 'Borrar';
+      deleteButton.textContent = 'Clean';
       deleteButton.type = 'button';
       deleteButton.onclick = () => div.remove();
       div.appendChild(deleteButton);
@@ -71,46 +73,45 @@
     document.getElementById('predictionForm').addEventListener('submit', async function(event) {
       event.preventDefault();
 
-      const inputColumns = [];
-      const inputValues = [];
+      const inputValues = {};
       const columnInputs = document.querySelectorAll('.column-input');
       columnInputs.forEach(input => {
         const column = input.querySelector('select').value;
         const value = parseFloat(input.querySelector('input').value);
-        inputColumns.push(column);
-        inputValues.push(value);
+        inputValues[column] = value;
       });
 
       const targetColumn = document.getElementById('targetColumn').value.trim();
-      const csvPath = document.getElementById('csvPath').value.trim();
 
       document.getElementById('result').style.display = 'none';
       document.getElementById('error').style.display = 'none';
 
+      const csvPaths = ["100m_splits_data.csv", "200m_splits_data.csv"];
+
       try {
-        const response = await fetch('http://localhost:8000/predict/', {
+        const response = await fetch('http://localhost:8000/predict_multiple_csvs/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            input_values: inputValues,
-            input_columns: inputColumns,
-            target_column: targetColumn,
-            csv_path: csvPath
+            input: inputValues, 
+            target_column: targetColumn, 
+            csv_paths: csvPaths
           })
         });
 
         const data = await response.json();
+        console.log(data);
 
         if (response.ok) {
           document.getElementById('prediction').textContent = data.prediction.toFixed(2);
           document.getElementById('mae').textContent = data.mean_absolute_error.toFixed(2);
           document.getElementById('result').style.display = 'block';
         } else {
-          document.getElementById('errorMessage').textContent = data.detail || 'Error desconocido.';
+          document.getElementById('errorMessage').textContent = data.detail || 'Unknown error';
           document.getElementById('error').style.display = 'block';
         }
       } catch (error) {
-        document.getElementById('errorMessage').textContent = 'Hubo un problema con la conexión al servidor.';
+        document.getElementById('errorMessage').textContent = 'Server error';
         document.getElementById('error').style.display = 'block';
       }
     });
