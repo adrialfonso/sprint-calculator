@@ -9,7 +9,7 @@
 <body>
   <div class="container">
     <h1>Sprint Calculator</h1>
-
+    
     <form id="predictionForm">
       <label for="inputColumns">Input splits:</label>
       <div id="columnInputs"></div>
@@ -22,8 +22,9 @@
     </form>
 
     <div id="result" class="result" style="display: none;">
-      <h3>Result: <span id="prediction"></span> seconds</h3>
-      <p>Mean Absolute Error: <span id="mae"></span></p>
+      <h3>Competition adjusted result: <span id="adjustedPrediction"></span> seconds</h3>
+      <p id="predictionText"></p>
+      <p>Mean Absolute Error (MAE): <span id="mae"></span></p>
     </div>
 
     <div id="error" class="error" style="display: none;">
@@ -146,15 +147,30 @@
         console.log(data);
 
         if (response.ok) {
-          document.getElementById('prediction').textContent = data.prediction.toFixed(2);
+          const predictionText = `${targetColumn} result if the ${data.last_entry} is a split time from the ${targetColumn} race: ${data.prediction.toFixed(2)} seconds`;
+          
+          if (parseFloat(targetColumn) < parseFloat(data.last_entry)) {
+            document.getElementById('predictionText').textContent = `Theoretical ${targetColumn} split time in the ${data.last_entry} race: ${data.prediction.toFixed(2)} seconds`;
+          } else {
+            document.getElementById('predictionText').textContent = predictionText;
+          }
+
+          document.getElementById('adjustedPrediction').textContent = data.adjusted_prediction.toFixed(2);
           document.getElementById('mae').textContent = data.mean_absolute_error.toFixed(2);
+
+          if (data.adjusted_prediction.toFixed(2) === data.prediction.toFixed(2)) {
+            document.getElementById('predictionText').style.display = 'none';
+          } else {
+            document.getElementById('predictionText').style.display = 'block';
+          }
+
           document.getElementById('result').style.display = 'block';
         } else {
-          document.getElementById('errorMessage').textContent = data.detail || 'Unknown error';
+          document.getElementById('errorMessage').textContent = data.detail;
           document.getElementById('error').style.display = 'block';
         }
       } catch (error) {
-        document.getElementById('errorMessage').textContent = 'Server error';
+        document.getElementById('errorMessage').textContent = `Server error: ${error.message}`;
         document.getElementById('error').style.display = 'block';
       }
     });

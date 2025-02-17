@@ -1,8 +1,15 @@
 body {
   font-family: Arial, sans-serif;
-  background-color: #f4f7f6;
   margin: 0;
   padding: 0;
+  background: url('noah_wallpaper.jpg') no-repeat center center fixed;
+  background-size: cover;
+  position: relative;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.8;
 }
 
 h1 {
@@ -19,6 +26,7 @@ h1 {
   background-color: white;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
+  position: absolute;
 }
 
 form {
@@ -29,7 +37,6 @@ form {
 label {
   font-size: 16px;
   margin-bottom: 15px;
-  margin-bottom: 15px;
 }
 
 input, select {
@@ -39,6 +46,7 @@ input, select {
   border-radius: 5px;
   font-size: 16px;
   width: 100%;
+  box-sizing: border-box;
 }
 
 button {
@@ -49,7 +57,6 @@ button {
   border-radius: 5px;
   font-size: 16px;
   cursor: pointer;
-  margin-bottom: 15px;
   margin-bottom: 15px;
 }
 
@@ -69,7 +76,8 @@ button:hover {
 }
 
 .result p {
-  font-size: 18px;
+  color: black; 
+  font-size: 16px; 
 }
 
 .column-input {
@@ -99,22 +107,22 @@ button:hover {
 
 @media (max-width: 600px) {
   .container {
-      padding: 15px;
+    padding: 15px;
   }
 
   input, button {
-      font-size: 14px;
+    font-size: 14px;
   }
 }
 
 .checkbox-label {
-  font-size: 0.9rem; 
+  font-size: 0.9rem;
   margin-left: 5px;
 }
 
 .checkbox-container {
   display: flex;
-  gap: 10px; 
+  gap: 10px;
   align-items: center;
 }
 
