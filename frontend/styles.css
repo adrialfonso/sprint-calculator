@@ -129,3 +129,9 @@ button:hover {
 .column-input {
   margin-bottom: 10px;
 }
+
+.slider-container select {
+  width: 100%;
+  padding: 10px;
+  font-size: 15px;
+}

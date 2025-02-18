@@ -16,7 +16,8 @@
       <button type="button" onclick="addColumnInput()">Add split</button>
 
       <label for="targetColumn">Target Distance:</label>
-      <input type="text" id="targetColumn" placeholder="100m" required>
+      <select id="targetColumn" required>
+      </select>
 
       <button type="submit">Predict</button>
     </form>
@@ -40,7 +41,16 @@
       '10-40m', '20-50m', '30-60m', '40-70m', '50-80m', '60-90m', '70-100m', 
       '50-100m', '100-150m', '150-200m', '180-200m', 
       '50-150m', '100-200m'];
+    
     let columnCount = 0;
+
+    const targetColumnSelect = document.getElementById('targetColumn');
+    columnOptions.forEach(option => {
+      const optionElement = document.createElement('option');
+      optionElement.value = option;
+      optionElement.textContent = option;
+      targetColumnSelect.appendChild(optionElement);
+    });
 
     function addColumnInput() {
       const container = document.getElementById('columnInputs');
@@ -59,42 +69,21 @@
       input.required = true;
       div.appendChild(input);
 
-      const checkboxDiv = document.createElement('div');
-      checkboxDiv.classList.add('checkbox-container');
-      
-      const manualTimeCheckbox = document.createElement('input');
-      manualTimeCheckbox.setAttribute('type', 'checkbox');
-      manualTimeCheckbox.setAttribute('id', `manualTime${columnCount}`);
-      const manualTimeLabel = document.createElement('label');
-      manualTimeLabel.setAttribute('for', `manualTime${columnCount}`);
-      manualTimeLabel.textContent = 'Hand timing';
-      manualTimeLabel.classList.add('checkbox-label');
-      checkboxDiv.appendChild(manualTimeCheckbox);
-      checkboxDiv.appendChild(manualTimeLabel);
+      const sliderDiv = document.createElement('div');
+      sliderDiv.classList.add('slider-container');
 
-      const electronicTimeCheckbox = document.createElement('input');
-      electronicTimeCheckbox.setAttribute('type', 'checkbox');
-      electronicTimeCheckbox.setAttribute('id', `electronicTime${columnCount}`);
-      const electronicTimeLabel = document.createElement('label');
-      electronicTimeLabel.setAttribute('for', `electronicTime${columnCount}`);
-      electronicTimeLabel.textContent = 'Electronic timing';
-      electronicTimeLabel.classList.add('checkbox-label');
-      checkboxDiv.appendChild(electronicTimeCheckbox);
-      checkboxDiv.appendChild(electronicTimeLabel);
+      const timingSelect = document.createElement('select');
+      timingSelect.setAttribute('id', `timingSelect${columnCount}`);
 
-      manualTimeCheckbox.addEventListener('change', () => {
-        if (manualTimeCheckbox.checked) {
-          electronicTimeCheckbox.checked = false;
-        }
-      });
+      timingSelect.innerHTML = ` 
+        <option value="" disabled selected>Timing</option>
+        <option value="hand">Hand timing</option>
+        <option value="electronic_no_rt">Electronic timing (no RT)</option>
+        <option value="electronic_with_rt">Electronic timing (with RT)</option>
+      `;
 
-      electronicTimeCheckbox.addEventListener('change', () => {
-        if (electronicTimeCheckbox.checked) {
-          manualTimeCheckbox.checked = false;
-        }
-      });
-
-      div.appendChild(checkboxDiv);
+      sliderDiv.appendChild(timingSelect);
+      div.appendChild(sliderDiv);
 
       const deleteButton = document.createElement('button');
       deleteButton.textContent = 'Clean';
@@ -113,16 +102,23 @@
 
       const inputValues = {};
       const columnInputs = document.querySelectorAll('.column-input');
+      
       columnInputs.forEach(input => {
         const column = input.querySelector('select').value;
-        const value = parseFloat(input.querySelector('input').value);
-        const manualTimeCheckbox = input.querySelector('input[type="checkbox"]:nth-child(1)');
+        let value = parseFloat(input.querySelector('input').value);
         
-        if (manualTimeCheckbox.checked) {
-          inputValues[column] = value + 0.45;
-        } else {
-          inputValues[column] = value;
+        const timingSelect = input.querySelector('select[id^="timingSelect"]');
+        const timingValue = timingSelect ? timingSelect.value : 'hand';  
+
+        if (timingValue === 'hand') {
+          value += 0.45;  
+        } else if (timingValue === 'electronic_no_rt') {
+          value += 0.2;   
+        } else if (timingValue === 'electronic_with_rt') {
+          
         }
+        
+        inputValues[column] = value;
       });
 
       const targetColumn = document.getElementById('targetColumn').value.trim();
@@ -147,7 +143,7 @@
         console.log(data);
 
         if (response.ok) {
-          const predictionText = `${targetColumn} result if the ${data.last_entry} is a split time from the ${targetColumn} race: ${data.prediction.toFixed(2)} seconds`;
+          const predictionText = `${targetColumn} result if the ${data.last_entry} is a split time from a ${targetColumn} race: ${data.prediction.toFixed(2)} seconds`;
           
           if (parseFloat(targetColumn) < parseFloat(data.last_entry)) {
             document.getElementById('predictionText').textContent = `Theoretical ${targetColumn} split time in the ${data.last_entry} race: ${data.prediction.toFixed(2)} seconds`;

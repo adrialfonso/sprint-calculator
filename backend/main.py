@@ -26,13 +26,22 @@ class PredictionInput(BaseModel):
     target_column: str
     csv_paths: list  
 
-xgb_params = {
+xgb_params_100m = {
     "colsample_bytree": 1.0,
     "learning_rate": 0.1,
     "max_depth": 3,
     "min_child_weight": 5,
     "n_estimators": 300,
     "subsample": 0.7
+}
+
+xgb_params_200m = {
+    "colsample_bytree": 1.0,
+    "learning_rate": 0.1,
+    "max_depth": 5,
+    "min_child_weight": 5,
+    "n_estimators": 100,
+    "subsample": 0.5
 }
 
 def is_input_similar(X_train, input, threshold):
@@ -45,13 +54,18 @@ def is_input_similar(X_train, input, threshold):
 
     return min_distance <= threshold
 
-def train_and_predict(csv_path, input, target_column, poly_degree=2, threshold=0.07): 
+def train_and_predict(csv_path, input, target_column, poly_degree=2, threshold=0.07, xgb_params=None): 
     df = pd.read_csv(csv_path).dropna(subset=list(input.keys()) + [target_column])
     for col in list(input.keys()) + [target_column]:
         df[col] = pd.to_numeric(df[col], errors='coerce')
 
     X = df[list(input.keys())]
     y = df[target_column]
+    valid_rows = X.notna().all(axis=1) & y.notna() 
+
+    X = X[valid_rows]
+    y = y[valid_rows]
+
     input_values = list(input.values())
 
     if not is_input_similar(X, input, threshold):
@@ -92,42 +106,53 @@ def train_and_predict_multiple_csvs(csv_paths, target_column, input):
     input_100m = {col: input[col] for col in input_columns_100m}
     input_200m = {col: input[col] for col in input_columns_200m}
 
-    longest_race = max(input.keys(), key=lambda x: int(x.replace('m', '')))
+    valid_keys = [key for key in input.keys() if '-' not in key]
+
+    if valid_keys:
+        last_entry = max(valid_keys, key=lambda x: int(x.replace('m', '')))
+    else:
+        last_entry = '0'
 
     if len(input_columns_100m) == len(input) and target_column not in df_200m.columns:
-        pred, mae = train_and_predict(csv_paths[0], input, target_column)
+        pred, mae = train_and_predict(csv_paths[0], input, target_column, xgb_params=xgb_params_100m)
         return pred, pred, mae
     
     if len(input_columns_200m) == len(input) and target_column not in df_100m.columns:
-        pred, mae = train_and_predict(csv_paths[1], input, target_column)
-        adjusted_prediction = get_adjusted_prediction(target_column, longest_race, pred)
+        pred, mae = train_and_predict(csv_paths[1], input, target_column, xgb_params=xgb_params_200m)
+        adjusted_prediction = get_adjusted_prediction(target_column, last_entry, pred)
         return pred, adjusted_prediction, mae
     
     if target_column in df_200m.columns:
-        pred_100m, first_mae = train_and_predict(csv_paths[0], input_100m, "100m")
+        pred_100m, first_mae = train_and_predict(csv_paths[0], input_100m, "100m", xgb_params=xgb_params_100m)
         input_with_100m = {**input_200m, "100m*": pred_100m + 0.33}
-        pred, second_mae = train_and_predict(csv_paths[1], input_with_100m, target_column)
+        pred, second_mae = train_and_predict(csv_paths[1], input_with_100m, target_column, xgb_params=xgb_params_200m)
     else:
-        pred_100m, first_mae = train_and_predict(csv_paths[1], input_200m, "100m*")
+        pred_100m, first_mae = train_and_predict(csv_paths[1], input_200m, "100m*", xgb_params=xgb_params_200m)
         input_with_100m = {**input_100m, "100m": pred_100m - 0.33}
-        pred, second_mae = train_and_predict(csv_paths[0], input_with_100m, target_column)
+        pred, second_mae = train_and_predict(csv_paths[0], input_with_100m, target_column, xgb_params=xgb_params_100m)
 
-    adjusted_prediction = get_adjusted_prediction(target_column, longest_race, pred)
+    adjusted_prediction = get_adjusted_prediction(target_column, last_entry, pred)
     return pred, adjusted_prediction, first_mae + second_mae
 
-@app.post("/predict_multiple_csvs/")
+@app.post("/predict_multiple_csvs/") 
 async def predict_multiple_csvs(input_data: PredictionInput):
     prediction, adjusted_prediction, mae = train_and_predict_multiple_csvs(
         input_data.csv_paths,
         input_data.target_column,
         input_data.input
     )
-    
-    last_entry = max(input_data.input.keys(), key=lambda x: int(x.replace('m', '')))
-    
+
+    valid_keys = [key for key in input_data.input.keys() if '-' not in key]
+
+    if valid_keys:
+        last_entry = max(valid_keys, key=lambda x: int(x.replace('m', '')))
+    else:
+        last_entry = '0'
+
     return {
         "prediction": float(prediction),
         "adjusted_prediction": float(adjusted_prediction),
         "mean_absolute_error": float(mae),
         "last_entry": last_entry 
     }
+
