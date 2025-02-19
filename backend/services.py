@@ -6,6 +6,8 @@ from sklearn.linear_model import LinearRegression
 import xgboost as xgb
 from sklearn.metrics import euclidean_distances
 from fastapi import HTTPException
+import warnings 
+warnings.filterwarnings("ignore")
 
 xgb_params_100m = {
     "colsample_bytree": 1.0,

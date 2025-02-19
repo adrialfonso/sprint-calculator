@@ -2,6 +2,8 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from services import train_and_predict_multiple_csvs
+import warnings 
+warnings.filterwarnings("ignore")
 
 app = FastAPI()
 

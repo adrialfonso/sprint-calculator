@@ -4,16 +4,16 @@ body {
   padding: 0;
   background: url('noah_wallpaper.jpg') no-repeat center center fixed;
   background-size: cover;
-  position: relative;
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   opacity: 0.8;
+  overflow: hidden; 
 }
 
 h1 {
-  color: #007bff;
+  color: #392110;
   text-align: center;
   margin-top: 20px;
 }
@@ -21,17 +21,21 @@ h1 {
 .container {
   width: 100%;
   max-width: 600px;
-  margin: 0 auto;
   padding: 20px;
-  background-color: white;
+  background-color: rgb(255, 255, 255);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
 }
 
 form {
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 label {
@@ -51,7 +55,7 @@ input, select {
 
 button {
   padding: 12px;
-  background-color: #007bff;
+  background-color: #dc0076;
   color: white;
   border: none;
   border-radius: 5px;
@@ -61,7 +65,7 @@ button {
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: #a11b89;
 }
 
 .result {
@@ -76,8 +80,8 @@ button:hover {
 }
 
 .result p {
-  color: black; 
-  font-size: 16px; 
+  color: black;
+  font-size: 16px;
 }
 
 .column-input {
