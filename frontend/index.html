@@ -129,7 +129,7 @@
       const csvPaths = ["100m_splits_data.csv", "200m_splits_data.csv"];
 
       try {
-        const response = await fetch('http://localhost:8000/predict_multiple_csvs/', {
+        const response = await fetch('https://sprint-calculator.onrender.com/predict_multiple_csvs/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
