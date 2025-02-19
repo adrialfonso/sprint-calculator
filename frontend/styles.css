@@ -4,12 +4,25 @@ body {
   padding: 0;
   background: url('noah_wallpaper.jpg') no-repeat center center fixed;
   background-size: cover;
-  height: 100vh;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   opacity: 0.8;
-  overflow: hidden; 
+  overflow-y: auto;
+  padding-top: 5%;
+  padding-bottom: 5%;
+}
+
+@media (max-width: 600px) {
+  body {
+    padding-top: 25%;
+    padding-bottom: 25%;
+  }
+
+  input, button {
+    font-size: 14px;
+  }
 }
 
 h1 {
@@ -109,27 +122,6 @@ button:hover {
   background-color: #c82333;
 }
 
-@media (max-width: 600px) {
-  .container {
-    padding: 15px;
-  }
-
-  input, button {
-    font-size: 14px;
-  }
-}
-
-.checkbox-label {
-  font-size: 0.9rem;
-  margin-left: 5px;
-}
-
-.checkbox-container {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
 .column-input {
   margin-bottom: 10px;
 }
@@ -138,4 +130,35 @@ button:hover {
   width: 100%;
   padding: 10px;
   font-size: 15px;
+}
+
+.toggle-text-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  background: url('info.png') no-repeat center center;
+  background-size: 30px 30px; 
+  width: 30px; 
+  height: 30px; 
+}
+
+.toggle-text-btn:hover {
+  background-color: white;
+}
+
+.extra-text {
+  background-color: white;
+  padding: 15px;
+  margin-top: 5px;
+  border-radius: 5px;
+  text-align: left; 
+  font-size: 14px;
+}
+
+.extra-text p {
+  margin-top: 5px; 
 }

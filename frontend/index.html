@@ -9,16 +9,16 @@
 <body>
   <div class="container">
     <h1>Sprint Calculator</h1>
-    
+    <button id="toggleTextButton" class="toggle-text-btn"></button> 
+
     <form id="predictionForm">
-      <label for="inputColumns">Input splits:</label>
+      <label for="inputColumns">Input distances:</label>
       <div id="columnInputs"></div>
-      <button type="button" onclick="addColumnInput()">Add split</button>
+      <button type="button" onclick="addColumnInput()">Add input</button>
 
       <label for="targetColumn">Target Distance:</label>
       <select id="targetColumn" required>
       </select>
-
       <button type="submit">Predict</button>
     </form>
 
@@ -31,8 +31,20 @@
     <div id="error" class="error" style="display: none;">
       <h3>Error: <span id="errorMessage"></span></h3>
     </div>
-  </div>
 
+    <div id="extraText" class="extra-text" style="display: none;">
+      <h3 style="text-align: center;">How to use the Sprint Calculator</h3>
+      <p>Welcome to Sprint Calculator. Please follow the instructions below:</p>
+      <p><strong>Input Distance: </strong>Enter the time in seconds for the selected distance.</p>
+      <p><strong>Target Distance: </strong>Select the distance for which you would like to predict the time.</p>
+      <p><strong>Timing Menu:</strong></p>
+      <ul>
+        <li><p><strong>Hand Timing: </strong>Adds 0.45 seconds to the entered value.</p></li>
+        <li><p><strong>Electronic Timing (No Reaction Time): </strong>Adds 0.2 seconds to the entered value. This timing method records the frame in which the runner's hands leave the ground at the start, ideal for tools like Freelap or video software (e.g., Coach Now).</p></li>
+        <li><p><strong>Electronic Timing (With Reaction Time): </strong>Competition timing.</p></li>
+      </ul>
+    </div>
+  </div>
   <script src="script.js"></script>
 </body>
 </html>
