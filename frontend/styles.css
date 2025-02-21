@@ -4,6 +4,7 @@ body {
   padding: 0;
   background: url('noah_wallpaper.jpg') no-repeat center center fixed;
   background-size: cover;
+  background-attachment: fixed;
   height: 100%;
   display: flex;
   justify-content: center;
@@ -152,7 +153,7 @@ button:hover {
 
 .extra-text {
   background-color: white;
-  padding: 15px;
+  padding: 10px;
   margin-top: 5px;
   border-radius: 5px;
   text-align: left; 
@@ -161,4 +162,17 @@ button:hover {
 
 .extra-text p {
   margin-top: 5px; 
+}
+
+.flags {
+  top: 15px;
+  right: 15px;
+  display: flex;
+  gap: 10px;
+  justify-content: right;
+}
+
+.flag {
+  width: 30px;
+  cursor: pointer;
 }
