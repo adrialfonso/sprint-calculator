@@ -2,10 +2,10 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background: url('noah_wallpaper.jpg') no-repeat center center fixed;
+  background-color: rgb(199, 228, 241);
   background-size: cover;
   background-attachment: fixed;
-  min-height: 80vh; 
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -36,7 +36,6 @@ h1 {
   width: 100%;
   max-width: 600px;
   padding: 20px;
-  margin-top: -50px;
   background-color: rgb(255, 255, 255);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
@@ -70,7 +69,7 @@ input, select {
 
 button {
   padding: 12px;
-  background-color: #dc0076;
+  background-color: rgb(88, 196, 243);
   color: white;
   border: none;
   border-radius: 5px;
@@ -80,7 +79,7 @@ button {
 }
 
 button:hover {
-  background-color: #d612b2;
+  background-color: rgb(88, 196, 243);
 }
 
 .result {
