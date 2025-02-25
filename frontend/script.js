@@ -2,13 +2,9 @@ const toggleTextButton = document.getElementById('toggleTextButton');
 const extraTextDiv = document.getElementById('extraText');
 
 toggleTextButton.addEventListener('click', function() {
-  if (extraTextDiv.style.display === 'none') {
-    extraTextDiv.style.display = 'block';
-    toggleTextButton.style.backgroundImage = 'url("info.png")'; 
-  } else {
-    extraTextDiv.style.display = 'none';
-    toggleTextButton.style.backgroundImage = 'url("info.png")'; 
-  }
+  const isHidden = extraTextDiv.style.display === 'none';
+  extraTextDiv.style.display = isHidden ? 'block' : 'none';
+  toggleTextButton.style.backgroundImage = 'url("info.png")';
 });
 
 const columnOptions = [
@@ -30,43 +26,62 @@ columnOptions.forEach(option => {
   targetColumnSelect.appendChild(optionElement);
 });
 
-function addColumnInput() {
-  const container = document.getElementById('columnInputs');
-  const div = document.createElement('div');
-  div.classList.add('column-input');
-
+function createSelectElement(options) {
   const select = document.createElement('select');
-  select.setAttribute('name', `inputColumn${columnCount}`);
-  select.innerHTML = columnOptions.map(option => `<option value="${option}">${option}</option>`).join('');
-  div.appendChild(select);
+  select.innerHTML = options.map(option => `<option value="${option}">${option}</option>`).join('');
+  return select;
+}
 
+function createInputElement() {
   const input = document.createElement('input');
   input.setAttribute('type', 'number');
   input.setAttribute('placeholder', 'Split time');
   input.setAttribute('step', 'any');
   input.required = true;
-  div.appendChild(input);
+  return input;
+}
 
-  const sliderDiv = document.createElement('div');
-  sliderDiv.classList.add('slider-container');
-
+function createTimingSelectElement() {
   const timingSelect = document.createElement('select');
-  timingSelect.setAttribute('id', `timingSelect${columnCount}`);
-
-  timingSelect.innerHTML = ` 
+  timingSelect.innerHTML = `
     <option value="" disabled selected>Timing</option>
     <option value="hand">Hand timing</option>
     <option value="electronic_no_rt">Electronic timing (no RT)</option>
     <option value="electronic_with_rt">Electronic timing (with RT)</option>
   `;
+  return timingSelect;
+}
 
+function createSliderDiv(timingSelect) {
+  const sliderDiv = document.createElement('div');
+  sliderDiv.classList.add('slider-container');
   sliderDiv.appendChild(timingSelect);
-  div.appendChild(sliderDiv);
+  return sliderDiv;
+}
 
+function createDeleteButton(div) {
   const deleteButton = document.createElement('button');
   deleteButton.textContent = 'Clean';
   deleteButton.type = 'button';
   deleteButton.onclick = () => div.remove();
+  return deleteButton;
+}
+
+function addColumnInput() {
+  const container = document.getElementById('columnInputs');
+  const div = document.createElement('div');
+  div.classList.add('column-input');
+
+  const select = createSelectElement(columnOptions);
+  div.appendChild(select);
+
+  const input = createInputElement();
+  div.appendChild(input);
+
+  const timingSelect = createTimingSelectElement();
+  div.appendChild(createSliderDiv(timingSelect));
+
+  const deleteButton = createDeleteButton(div);
   div.appendChild(deleteButton);
 
   container.appendChild(div);
@@ -74,14 +89,8 @@ function addColumnInput() {
 
   select.addEventListener('change', function() {
     const selectedOption = select.value;
-
-    if (selectedOption.includes('-')) {
-      timingSelect.disabled = true;
-      timingSelect.style.backgroundColor = 'lightgray'; 
-    } else {
-      timingSelect.disabled = false;
-      timingSelect.style.backgroundColor = ''; 
-    }
+    timingSelect.disabled = selectedOption.includes('-');
+    timingSelect.style.backgroundColor = selectedOption.includes('-') ? 'lightgray' : '';
   });
 }
 
@@ -92,36 +101,32 @@ document.getElementById('predictionForm').addEventListener('submit', async funct
 
   const inputValues = {};
   const columnInputs = document.querySelectorAll('.column-input');
-  let validTiming = true; 
+  let validTiming = true;
 
   columnInputs.forEach(input => {
     const column = input.querySelector('select').value;
     let value = parseFloat(input.querySelector('input').value);
 
     const timingSelect = input.querySelector('select[id^="timingSelect"]');
-    const timingValue = timingSelect ? timingSelect.value : '';  
+    const timingValue = timingSelect ? timingSelect.value : '';
 
-    if (timingSelect.disabled === false && !timingValue) {
+    if (timingSelect && !timingValue && !timingSelect.disabled) {
       validTiming = false;
-      timingSelect.style.border = '2px solid red';  
+      timingSelect.style.border = '2px solid red';
     } else {
-      timingSelect.style.border = ''; 
+      timingSelect.style.border = '';
     }
 
     if (timingValue === 'hand') {
-      value += 0.45;  
+      value += 0.45;
     } else if (timingValue === 'electronic_no_rt') {
-      value += 0.2;   
-    } else if (timingValue === 'electronic_with_rt') {
-      
+      value += 0.2;
     }
 
     inputValues[column] = value;
   });
 
-  if (!validTiming) {
-    return; 
-  }
+  if (!validTiming) return;
 
   const targetColumn = document.getElementById('targetColumn').value.trim();
 
@@ -135,8 +140,8 @@ document.getElementById('predictionForm').addEventListener('submit', async funct
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        input: inputValues, 
-        target_column: targetColumn, 
+        input: inputValues,
+        target_column: targetColumn,
         csv_paths: csvPaths
       })
     });

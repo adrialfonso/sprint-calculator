@@ -1,12 +1,12 @@
 import pandas as pd
 from sklearn.metrics import mean_absolute_error
-from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import PolynomialFeatures
+from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.linear_model import LinearRegression
 import xgboost as xgb
 from sklearn.metrics import euclidean_distances
 from fastapi import HTTPException
-import warnings 
+import warnings
+
 warnings.filterwarnings("ignore")
 
 xgb_params_100m = {
@@ -94,10 +94,7 @@ def train_and_predict_multiple_csvs(csv_paths, target_column, input):
 
     valid_keys = [key for key in input.keys() if '-' not in key]
 
-    if valid_keys:
-        last_entry = max(valid_keys, key=lambda x: int(x.replace('m', '')))
-    else:
-        last_entry = 0
+    last_entry = max(valid_keys, key=lambda x: int(x.replace('m', ''))) if valid_keys else 0
 
     if len(input_columns_100m) == len(input) and target_column not in df_200m.columns:
         pred, mae = train_and_predict(csv_paths[0], input, target_column, xgb_params=xgb_params_100m)

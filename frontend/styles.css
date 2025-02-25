@@ -30,20 +30,20 @@ h1 {
   color: #392110;
   text-align: center;
   margin-top: 20px;
+  margin-bottom: 15px;
 }
 
 .container {
   width: 100%;
   max-width: 600px;
   padding: 20px;
-  background-color: rgb(255, 255, 255);
+  background-color: #fff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
-  overflow: hidden;
 }
 
 form {
@@ -84,18 +84,19 @@ button:hover {
 
 .result {
   display: none;
-  margin-top: 20px;
   text-align: center;
 }
 
 .result h3 {
   color: #28a745;
   font-size: 24px;
+  margin-top: 15px;
 }
 
 .result p {
   color: black;
   font-size: 16px;
+  margin-top: 10px;
 }
 
 .column-input {
@@ -123,10 +124,6 @@ button:hover {
   background-color: #c82333;
 }
 
-.column-input {
-  margin-bottom: 10px;
-}
-
 .slider-container select {
   width: 100%;
   padding: 10px;
@@ -142,9 +139,9 @@ button:hover {
   border-radius: 5px;
   cursor: pointer;
   background: url('info.png') no-repeat center center;
-  background-size: 30px 30px; 
-  width: 30px; 
-  height: 30px; 
+  background-size: 30px 30px;
+  width: 30px;
+  height: 30px;
 }
 
 .toggle-text-btn:hover {
@@ -156,12 +153,12 @@ button:hover {
   padding: 10px;
   margin-top: 5px;
   border-radius: 5px;
-  text-align: left; 
+  text-align: left;
   font-size: 14px;
 }
 
 .extra-text p {
-  margin-top: 5px; 
+  margin-top: 5px;
 }
 
 .flags {
