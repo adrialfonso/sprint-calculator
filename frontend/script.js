@@ -131,7 +131,7 @@ document.getElementById('predictionForm').addEventListener('submit', async funct
   const csvPaths = ["100m_splits_data.csv", "200m_splits_data.csv"];
 
   try {
-    const response = await fetch('http://127.0.0.1:8000/predict_multiple_csvs/', {
+    const response = await fetch('https://sprint-calculator-backend.onrender.com/predict_multiple_csvs/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
