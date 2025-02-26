@@ -2,7 +2,7 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: rgb(199, 228, 241);
+  background-color: rgb(219, 234, 241);
   background-size: cover;
   background-attachment: fixed;
   height: 100%;
@@ -27,7 +27,7 @@ body {
 }
 
 h1 {
-  color: #392110;
+  color: #000000;
   text-align: center;
   margin-top: 20px;
   margin-bottom: 15px;
@@ -36,7 +36,7 @@ h1 {
 .container {
   width: 100%;
   max-width: 600px;
-  padding: 20px;
+  padding: 15px 20px 15px 20px;
   background-color: #fff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
