@@ -79,7 +79,7 @@ button {
 }
 
 button:hover {
-  background-color: rgb(88, 196, 243);
+  background-color: rgb(37, 158, 210);
 }
 
 .result {
@@ -179,4 +179,24 @@ button:hover {
   width: 35px;
   top: 15px;
   left: 13px;
+}
+
+.contact-info {
+  display: flex;
+  align-items: center;
+  gap: 30px; 
+  font-size: 12px; 
+}
+
+#instagramLink a {
+  text-decoration: none; 
+  color: inherit; 
+  font-size: 12px; 
+}
+
+#instagramLink img {
+  width: 15px;
+  height: 15px;
+  vertical-align: middle;
+  margin-right: 5px;
 }
