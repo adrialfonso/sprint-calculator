@@ -7,7 +7,7 @@
   <link rel="icon" href="logo.png" type="image/png">
   <link rel="stylesheet" href="styles.css">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8609690760733686"
-     crossorigin="anonymous"></script>
+      crossorigin="anonymous"></script>
   <meta name="google-adsense-account" content="ca-pub-8609690760733686">
 </head>
 <body>
@@ -29,7 +29,7 @@
     <div id="result" class="result" style="display: none;">
       <h3>Competition result: <span id="adjustedPrediction"></span> seconds</h3>
       <p id="predictionText"></p>
-      <p>Mean Absolute Error (MAE): ± <span id="mae"></span> seconds</p>
+      <p>Expected error (MAE): ± <span id="mae"></span> seconds</p>
     </div>
 
     <div id="error" class="error" style="display: none;">
@@ -51,6 +51,7 @@
         <li><p>Electronic Timing (No Reaction Time): Adds 0.2 seconds to the entered value. This timing method records the frame in which the runner's hands leave the ground at the start, ideal for tools like Freelap or video software (e.g., Coach Now).</p></li>
         <li><p>Electronic Timing (With Reaction Time): Competition timing.</p></li>
       </ul>
+      <button id="closeHelpButton">Hide</button>
     </div>
 
     <div class="contact-info">

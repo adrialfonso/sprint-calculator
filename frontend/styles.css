@@ -200,3 +200,17 @@ button:hover {
   vertical-align: middle;
   margin-right: 5px;
 }
+
+#closeHelpButton {
+  background-color: #ffe3e3;
+  color: black;
+  width: 15%;
+  margin: 20px auto;  
+  display: block;  
+  padding: 10px;
+}
+
+#closeHelpButton:hover {
+  background-color: #ffbdbd;
+}
+

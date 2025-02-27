@@ -96,6 +96,23 @@ def train_and_predict_multiple_csvs(csv_paths, target_column, input):
 
     last_entry = max(valid_keys, key=lambda x: int(x.replace('m', ''))) if valid_keys else 0
 
+    if "100m" in input_100m and len(input_100m) > 1 and target_column in df_200m.columns:
+        pred_100m = []
+        for input_data in input_100m:
+            pred_100m_i, _ = train_and_predict(csv_paths[0], {input_data: input_100m[input_data]}, "100m", xgb_params=xgb_params_100m)
+            pred_100m.append(pred_100m_i)
+        pred_100m = sum(pred_100m) / len(pred_100m)
+        input_200m["100m*"] = pred_100m + 0.33
+        pred, mae = train_and_predict(csv_paths[1], input_200m, target_column, xgb_params=xgb_params_200m)
+        return pred, pred, mae
+    
+    if "100m" in input_100m and input_200m and target_column in df_100m.columns:
+        pred_100m_1, first_mae = train_and_predict(csv_paths[0], input_100m, "100m", xgb_params=xgb_params_100m)
+        pred_100m_2, second_mae = train_and_predict(csv_paths[1], input_200m, "100m*", xgb_params=xgb_params_200m)   
+        pred_100m_both = (pred_100m_1 + (pred_100m_2 - 0.33)) / 2
+        pred, third_mae = train_and_predict(csv_paths[0], {"100m": pred_100m_both}, target_column, xgb_params=xgb_params_100m)
+        return pred, pred, first_mae + second_mae + third_mae
+
     if len(input_columns_100m) == len(input) and target_column not in df_200m.columns:
         pred, mae = train_and_predict(csv_paths[0], input, target_column, xgb_params=xgb_params_100m)
         return pred, pred, mae
@@ -122,3 +139,4 @@ def train_and_predict_multiple_csvs(csv_paths, target_column, input):
 
     adjusted_prediction = get_adjusted_prediction(target_column, last_entry, pred)
     return pred, adjusted_prediction, first_mae + second_mae
+

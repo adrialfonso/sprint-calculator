@@ -11,6 +11,16 @@ toggleTextButton.addEventListener('click', function() {
   }
 });
 
+document.getElementById('closeHelpButton').addEventListener('click', function() {
+  document.getElementById('extraText').style.display = 'none';
+  document.getElementById('toggleTextButton').style.display = 'block'; 
+});
+
+document.getElementById('toggleTextButton').addEventListener('click', function() {
+  document.getElementById('extraText').style.display = 'block';
+  this.style.display = 'none'; 
+});
+
 const columnOptions = [
   '10m', '20m', '30m', '40m', '50m', '60m', '70m', '80m', '90m', '100m', '120m', '150m', '180m', '200m',
   '10-20m', '20-30m', '30-40m', '40-50m', '50-60m', '60-70m', '70-80m', '80-90m', '90-100m',
