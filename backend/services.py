@@ -6,8 +6,12 @@ import xgboost as xgb
 from sklearn.metrics import euclidean_distances
 from fastapi import HTTPException
 import warnings
+import platform
 
 warnings.filterwarnings("ignore")
+
+system = platform.system()
+model = platform.machine()
 
 xgb_params_100m = {
     "colsample_bytree": 1.0,
@@ -40,7 +44,7 @@ def is_input_similar(X_train, input, threshold):
     min_distance = distances.min()
     return min_distance <= threshold
 
-def train_and_predict(csv_path, input, target_column, poly_degree=2, threshold=0.07, xgb_params=None): 
+def train_and_predict(csv_path, input, target_column, poly_degree=2, threshold=0.15, xgb_params=None): 
     df = pd.read_csv(csv_path).dropna(subset=list(input.keys()) + [target_column])
     for col in list(input.keys()) + [target_column]:
         df[col] = pd.to_numeric(df[col], errors='coerce')
@@ -104,7 +108,7 @@ def train_and_predict_multiple_csvs(csv_paths, target_column, input):
         pred_100m = sum(pred_100m) / len(pred_100m)
         input_200m["100m*"] = pred_100m + 0.33
         pred, mae = train_and_predict(csv_paths[1], input_200m, target_column, xgb_params=xgb_params_200m)
-        print(round(pred, 2), input)
+        print(target_column, round(pred, 2), input, "OS:", system, model)
         return pred, pred, mae
     
     if "100m" in input_100m and input_200m and target_column in df_100m.columns:
@@ -112,25 +116,25 @@ def train_and_predict_multiple_csvs(csv_paths, target_column, input):
         pred_100m_2, second_mae = train_and_predict(csv_paths[1], input_200m, "100m*", xgb_params=xgb_params_200m)   
         pred_100m_both = (pred_100m_1 + (pred_100m_2 - 0.33)) / 2
         pred, third_mae = train_and_predict(csv_paths[0], {"100m": pred_100m_both}, target_column, xgb_params=xgb_params_100m)
-        print(round(pred, 2), input)
+        print(target_column, round(pred, 2), input, "OS:", system, model)
         return pred, pred, first_mae + second_mae + third_mae
 
     if len(input_columns_100m) == len(input) and target_column not in df_200m.columns:
         pred, mae = train_and_predict(csv_paths[0], input, target_column, xgb_params=xgb_params_100m)
-        print(round(pred, 2), input)
+        print(target_column, round(pred, 2), input, "OS:", system, model)
         return pred, pred, mae
     
     if len(input_columns_200m) == len(input) and target_column not in df_100m.columns:
         pred, mae = train_and_predict(csv_paths[1], input, target_column, xgb_params=xgb_params_200m)
         adjusted_prediction = get_adjusted_prediction(target_column, last_entry, pred)
-        print(round(pred, 2), input)
+        print(target_column, round(pred, 2), input, "OS:", system, model)
         return pred, adjusted_prediction, mae
     
     if target_column == "100m" and input_100m and input_200m:
         pred_100m_1, first_mae = train_and_predict(csv_paths[0], input_100m, "100m", xgb_params=xgb_params_100m)
         pred_100m_2, second_mae = train_and_predict(csv_paths[1], input_200m, "100m*", xgb_params=xgb_params_200m)   
         pred = (pred_100m_1 + (pred_100m_2 - 0.33)) / 2
-        print(round(pred, 2), input)
+        print(target_column, round(pred, 2), input, "OS:", system, model)
         return pred, pred, first_mae + second_mae
     
     if target_column in df_200m.columns:
@@ -143,6 +147,5 @@ def train_and_predict_multiple_csvs(csv_paths, target_column, input):
         pred, second_mae = train_and_predict(csv_paths[0], input_with_100m, target_column, xgb_params=xgb_params_100m)
 
     adjusted_prediction = get_adjusted_prediction(target_column, last_entry, pred)
-    print(round(pred, 2), input)
+    print(target_column, round(pred, 2), input, "OS:", system, model)
     return pred, adjusted_prediction, first_mae + second_mae
-
